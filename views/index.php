@@ -1,14 +1,12 @@
 <?php
-// /views/index.php
 
-// Asegúrate de que esta ruta sea correcta para salir de 'views' y entrar a 'php/controllers'
 require_once '../php/controllers/BodegaController.php';
 
 // Inicializar el controlador y obtener todos los datos de la BD
 $controller = new BodegaController();
 $datos = $controller->listarDatos();
 
-// Extraer los datos para usarlos fácilmente en el HTML
+// Extraer los datos 
 $bodegas = $datos['bodegas'];
 $encargados = $datos['encargados']; 
 
