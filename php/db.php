@@ -1,4 +1,7 @@
 <?php
+// /php/db.php
+date_default_timezone_set('America/Santiago');
+
 class Database {
     // Configuración de la conexión a PostgreSQL
     private $host = 'localhost';
