@@ -79,6 +79,7 @@ $encargados = $datos['encargados'];
                         <th>Dotacion</th>
                         <th>Encargado Asignado</th>
                         <th>fecha Creacion</th>
+                        <th>Estado</th>
                 </thead>
                 <tbody>
                     <?php foreach ($bodegas as $bodega): ?>
@@ -89,7 +90,7 @@ $encargados = $datos['encargados'];
                             <td><?php echo htmlspecialchars($bodega['dotacion']); ?></td>
                             <td><?php echo htmlspecialchars($bodega['nombre_encargado']); ?></td>
                             <td><?php echo htmlspecialchars($bodega['fecha_creacion']); ?></td>
-                            
+                            <td><?php echo htmlspecialchars($bodega['estado']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

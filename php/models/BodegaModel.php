@@ -16,6 +16,7 @@ class BodegaModel {
                     b.codigo_identificador,
                     b.fecha_creacion,
                     b.dotacion,
+                    b.estado,
                     e.nombre || ' ' || e.apellido_paterno || ' ' || e.apellido_materno AS nombre_encargado
                 FROM bodega b
                 LEFT JOIN encargado e ON b.rut_encargado = e.run
