@@ -18,8 +18,10 @@ class Database {
             $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->dbname}";
             $this->conn = new PDO($dsn, $this->user, $this->password, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, 
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
+
+            $this->conn->exec("SET client_encoding TO 'UTF8';");
             
 
         } catch (PDOException $e) {
