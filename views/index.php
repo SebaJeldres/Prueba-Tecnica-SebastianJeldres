@@ -28,13 +28,6 @@ $encargados = $datos['encargados'];
     </header>
 
     <main>
-        <?php if (isset($_GET['status'])): ?>
-            <?php if ($_GET['status'] == 'success'): ?>
-                <p style="color: green; font-weight: bold;">✅ ¡Operación realizada con éxito!</p>
-            <?php elseif ($_GET['status'] == 'error'): ?>
-                <p style="color: red; font-weight: bold;">❌ Error en la operación. Revise los datos.</p>
-            <?php endif; ?>
-        <?php endif; ?>
 
         <h2>Crear Nueva Bodega</h2>
         <form method="POST" action="index.php">
