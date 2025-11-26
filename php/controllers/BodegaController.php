@@ -15,8 +15,10 @@ class BodegaController {
 
     public function listarDatos() {
 
+        $filtro = $_GET['filtro_estado'] ?? null;
+
         // Obtener la lista de bodegas
-        $bodegas = $this->model->obtenerTodasBodegas();
+        $bodegas = $this->model->obtenerTodasBodegas($filtro);
         
         // Obtener la lista de encargados 
         $encargados = $this->model->obtenerEncargadosParaSeleccion();
@@ -39,19 +41,57 @@ class BodegaController {
     }
 
     public function gestionarPeticion() {
+        $status = null;
+        $id = $_REQUEST['id'] ?? null; // Obtener ID de GET o POST
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Intentar crear
-            $resultado = $this->crear($_POST);
+            // Manejar Creación o Actualización
             
-            // Redirigir despues de POST 
-            $status = $resultado ? 'success' : 'error';
+            if (isset($_POST['bodega_id']) && !empty($_POST['bodega_id'])) {
+                // Si existe un ID en POST, es una ACTUALIZACIÓN
+                $resultado = $this->actualizar($_POST);
+                $status = $resultado ? 'update_success' : 'update_error';
+            } else {
+                // Si no existe ID en POST, es una CREACIÓN
+                $resultado = $this->crear($_POST);
+                $status = $resultado ? 'success' : 'error';
+            }
+            
+            // Redirigir después de POST
             header("Location: index.php?status={$status}");
-            exit; // Detine el script después de la redireccion
+            exit; 
+            
+        } elseif (isset($_GET['accion'])) {
+            // Manejar acciones GET (Eliminar)
+            
+            if ($_GET['accion'] === 'eliminar' && !empty($id)) {
+                $resultado = $this->eliminar((int)$id);
+                $status = $resultado ? 'delete_success' : 'delete_error';
+                
+                header("Location: index.php?status={$status}");
+                exit; 
+            }
+            // Si la acción es 'editar', la lógica de carga está en index.php
         }
         
-        // Si no es POST, ejecuta el listado normal (GET)
+        // Si no es POST y no es una acción especial, ejecuta el listado normal (GET)
         return $this->listarDatos();
     }
+
+    public function obtenerBodegaParaEditar(int $id) {
+        return $this->model->obtenerBodegaPorId($id);
+    }
+    
+    public function actualizar(array $post_data): bool {
+        // La validación básica la realiza el Modelo, aquí solo llamamos al método
+        return $this->model->actualizarBodega($post_data);
+    }
+    
+    public function eliminar(int $id): bool {
+        return $this->model->eliminarBodega($id);
+    }
+
+
     
 }
 ?>

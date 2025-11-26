@@ -7,8 +7,8 @@ class BodegaModel {
         $this->db = $db_connection;
     }
 
-    public function obtenerTodasBodegas() {
-        $sql = "SELECT 
+    public function obtenerTodasBodegas(string $filtro_estado = null): array {
+    $sql = "SELECT 
                 b.bodega_id, 
                 b.nombre AS nombre_bodega, 
                 b.direccion, 
@@ -22,18 +22,25 @@ class BodegaModel {
             LEFT JOIN 
                 bodega_encargado be ON b.bodega_id = be.bodega_id
             LEFT JOIN 
-                encargado e ON be.encargado_id = e.run
-            GROUP BY
+                encargado e ON be.encargado_id = e.run";
+            
+    $params = [];
+    
+    if ($filtro_estado) {
+        $sql .= " WHERE b.estado = :estado";
+        $params[':estado'] = $filtro_estado;
+    }
+            
+    $sql .= " GROUP BY
                 b.bodega_id, b.nombre, b.direccion, b.codigo_identificador, b.fecha_creacion, b.dotacion, b.estado
             ORDER BY 
                 b.nombre ASC";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        
-        // retorna un array
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params); 
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
     
 
     public function obtenerEncargadosParaSeleccion() {
@@ -94,5 +101,88 @@ class BodegaModel {
             return true;
 
     }
+
+    public function obtenerBodegaPorId(int $id_bodega): array {
+        // 1. Obtener datos de la Bodega principal
+        $sql_bodega = "SELECT * FROM bodega WHERE bodega_id = :id";
+        $stmt_bodega = $this->db->prepare($sql_bodega);
+        $stmt_bodega->execute([':id' => $id_bodega]);
+        $bodega = $stmt_bodega->fetch(PDO::FETCH_ASSOC);
+
+        if (!$bodega) {
+            return [];
+        }
+
+        $sql_encargados = "SELECT encargado_id FROM bodega_encargado WHERE bodega_id = :id";
+        $stmt_encargados = $this->db->prepare($sql_encargados);
+        $stmt_encargados->execute([':id' => $id_bodega]);
+        
+        // Retorna solo los valores Run
+        $encargados_asignados = $stmt_encargados->fetchAll(PDO::FETCH_COLUMN, 0); 
+
+        $bodega['encargados_asignados'] = $encargados_asignados;
+
+        return $bodega;
+    }
+
+    public function actualizarBodega(array $datos): bool {
+    $this->db->beginTransaction();
+
+        $sql_bodega = "UPDATE bodega SET 
+                           codigo_identificador = :codigo_identificador,
+                           nombre = :nombre,
+                           direccion = :direccion,
+                           dotacion = :dotacion,
+                           estado = :estado
+                       WHERE bodega_id = :bodega_id";
+        
+        $params_bodega = [
+            ':codigo_identificador' => $datos['codigo_identificador'],
+            ':nombre'               => $datos['nombre'],
+            ':direccion'            => $datos['direccion'],
+            ':dotacion'             => $datos['dotacion'],
+            ':estado'               => $datos['estado'],
+            ':bodega_id'            => $datos['bodega_id'] 
+        ];
+
+        $stmt_bodega = $this->db->prepare($sql_bodega);
+        $stmt_bodega->execute($params_bodega);
+
+        // Gestionar relaciones
+        
+        //Elimiar todas las asignaciones anteriores 
+        $sql_delete_relaciones = "DELETE FROM bodega_encargado WHERE bodega_id = :bodega_id";
+        $stmt_delete = $this->db->prepare($sql_delete_relaciones);
+        $stmt_delete->execute([':bodega_id' => $datos['bodega_id']]);
+
+        // Insertar las nuevas asignaciones
+        $run_a_asignar = is_array($datos['rut_encargado']) ? $datos['rut_encargado'] : [$datos['rut_encargado']];
+        
+        // El formulario debe enviar al menos un encargado
+        if (!empty($run_a_asignar) && !in_array("", $run_a_asignar)) {
+            $sql_insert_relacion = "INSERT INTO bodega_encargado (bodega_id, encargado_id) 
+                                    VALUES (:bodega_id, :encargado_id)";
+            $stmt_insert = $this->db->prepare($sql_insert_relacion);
+            
+            foreach ($run_a_asignar as $run) {
+                $stmt_insert->execute([
+                    ':bodega_id'    => $datos['bodega_id'], 
+                    ':encargado_id' => $run
+                ]);
+            }
+        }
+        
+        $this->db->commit();
+        return true;
+
+    }
+
+    public function eliminarBodega(int $id_bodega): bool {
+    // Las restricciones ON DELETE CASCADE se encargarán de borrar las relaciones en bodega_encargado
+    $sql = "DELETE FROM bodega WHERE bodega_id = :id";
+    $stmt = $this->db->prepare($sql);
+    
+        return $stmt->execute([':id' => $id_bodega]);
+}
 }
 ?>
