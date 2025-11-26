@@ -27,6 +27,31 @@ class BodegaController {
             'encargados' => $encargados
         ];
     }
+
+    public function crear(array $post_data): bool {
+        // Validar que los campos esenciales no estén vacíos
+        if (empty($post_data['nombre']) || empty($post_data['direccion']) || empty($post_data['rut_encargado'])) {
+            return false;
+        }
+
+        // Llamar al Modelo para realizar la insercion
+        return $this->model->crearBodega($post_data);
+    }
+
+    public function gestionarPeticion() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Intentar crear
+            $resultado = $this->crear($_POST);
+            
+            // Redirigir despues de POST 
+            $status = $resultado ? 'success' : 'error';
+            header("Location: index.php?status={$status}");
+            exit; // Detine el script después de la redireccion
+        }
+        
+        // Si no es POST, ejecuta el listado normal (GET)
+        return $this->listarDatos();
+    }
     
 }
 ?>
