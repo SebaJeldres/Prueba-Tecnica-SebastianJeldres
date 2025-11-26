@@ -50,9 +50,9 @@ $encargados = $datos['encargados'];
             <label for="dotacion">Dotación Máxima:</label>
             <input type="number" name="dotacion" value="10" required><br><br>
 
-            <label for="rut_encargado">Encargado:</label>
-            <select name="rut_encargado" required>
-                <option value="" disabled selected>Seleccione un Encargado</option>
+            <label for="rut_encargado">Encargado(s):</label>
+            <select name="rut_encargado[]" multiple required> 
+                <option value="" disabled selected>Seleccione Encargado(s) (Ctrl + Click)</option>
                 <?php foreach ($encargados as $encargado): ?>
                     <option value="<?php echo htmlspecialchars($encargado['run']); ?>">
                         <?php echo htmlspecialchars($encargado['nombre_completo']); ?>
