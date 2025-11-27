@@ -178,7 +178,6 @@ class BodegaModel {
     }
 
     public function eliminarBodega(int $id_bodega): bool {
-    // Las restricciones ON DELETE CASCADE se encargarán de borrar las relaciones en bodega_encargado
     $sql = "DELETE FROM bodega WHERE bodega_id = :id";
     $stmt = $this->db->prepare($sql);
     

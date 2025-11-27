@@ -42,7 +42,7 @@ class BodegaController {
 
     public function gestionarPeticion() {
         $status = null;
-        $id = $_REQUEST['id'] ?? null; // Obtener ID de GET o POST
+        $id = $_REQUEST['id'] ?? null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Manejar Creación o Actualización
@@ -71,10 +71,9 @@ class BodegaController {
                 header("Location: index.php?status={$status}");
                 exit; 
             }
-            // Si la acción es 'editar', la lógica de carga está en index.php
+            
         }
         
-        // Si no es POST y no es una acción especial, ejecuta el listado normal (GET)
         return $this->listarDatos();
     }
 
@@ -83,7 +82,6 @@ class BodegaController {
     }
     
     public function actualizar(array $post_data): bool {
-        // La validación básica la realiza el Modelo, aquí solo llamamos al método
         return $this->model->actualizarBodega($post_data);
     }
     
