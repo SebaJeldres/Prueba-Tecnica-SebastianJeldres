@@ -15,21 +15,7 @@ Asegúrate de tener instalado y ejecutándose lo siguiente:
 * **Base de Datos:** PostgreSQL 10 o superior.
 * **Extensión PHP:** `pdo_pgsql` (Necesaria para la conexión a la base de datos).
 
-### 2.  Configuración de la Base de Datos
-
-Antes de levantar el servidor, debes configurar las credenciales de conexión y el esquema de la base de datos.
-
-#### A. Ajustar Conexión PHP
-
-Edita el archivo **`php/db.php`**
-
-```php
-// php/db/Conexion.php (Fragmento)
-
-private $user = "postgres"; 
-private $password = "tu_contraseña"; // <-- ¡Ajustar aquí!
-
-##  Librerías y Dependencias
+### 2.  Librerías y Dependencias
 
 El proyecto se desarrolla con PHP nativo y utiliza las siguientes librerías y extensiones para el funcionamiento seguro del *backend* y el dinamismo del *frontend*.
 
@@ -46,3 +32,18 @@ El proyecto se desarrolla con PHP nativo y utiliza las siguientes librerías y e
 | :--- | :--- |
 | **PDO** | Capa de abstracción de base de datos de PHP. Se usa para establecer conexiones seguras y ejecutar consultas parametrizadas, **previniendo la inyección SQL**. |
 | **`pdo_pgsql`** | El *driver* específico que permite a PDO comunicarse de manera efectiva con la base de datos **PostgreSQL**. |
+
+### 3.  Configuración de la Base de Datos
+
+Antes de levantar el servidor, debes configurar las credenciales de conexión y el esquema de la base de datos.
+
+#### A. Ajustar Conexión PHP
+
+Edita el archivo **`php/db.php`**
+
+```php
+// php/db/Conexion.php (Fragmento)
+
+private $user = "postgres"; 
+private $password = "tu_contraseña"; // <-- ¡Ajustar aquí!
+
