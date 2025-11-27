@@ -21,7 +21,7 @@ Antes de levantar el servidor, debes configurar las credenciales de conexión y 
 
 #### A. Ajustar Conexión PHP
 
-Edita el archivo **`php/db/Conexion.php`** y reemplaza `"tu_contraseña"` con tu contraseña de PostgreSQL.
+Edita el archivo **`php/db.php`**
 
 ```php
 // php/db/Conexion.php (Fragmento)
